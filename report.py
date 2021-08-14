@@ -55,6 +55,7 @@ class Report(object):
 
         url = "https://weixine.ustc.edu.cn/2020/daliy_report"
         resp=session.post(url, data=data, headers=headers)
+        print(resp)
         data = session.get("https://weixine.ustc.edu.cn/2020").text
         soup = BeautifulSoup(data, 'html.parser')
         pattern = re.compile("202[0-9]-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}")
@@ -66,6 +67,7 @@ class Report(object):
             print("Latest report: " + date)
             date = date + " +0800"
             reporttime = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S %z")
+            print("Reporttime : " + format(reporttime))
             timenow = datetime.datetime.now(pytz.timezone('Asia/Shanghai'))
             delta = timenow - reporttime
             print("{} second(s) before.".format(delta.seconds))
