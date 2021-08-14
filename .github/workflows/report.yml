@@ -31,5 +31,5 @@ jobs:
         STUID2: ${{ secrets.Stuid2 }}
         PASSWORD2: ${{ secrets.Password2 }}
       run: |
-        python report.py data.json "$STUID" "$PASSWORD"
-        python report.py data.json "$STUID2" "$PASSWORD2"
+        python report.py data_athome.json "$STUID" "$PASSWORD"
+        python report.py data_atschool.json "$STUID2" "$PASSWORD2"
