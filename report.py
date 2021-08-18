@@ -10,10 +10,13 @@ import argparse
 from bs4 import BeautifulSoup
 
 class Report(object):
-    def __init__(self, stuid, password, data_path):
+    def __init__(self, stuid, password, data_path, emer_person, relation, emer_phone):
         self.stuid = stuid
         self.password = password
         self.data_path = data_path
+        self.emer_person = emer_person
+        self.relation = relation
+        self.emer_phone = emer_phone
 
     def report(self):
         loginsuccess = False
@@ -38,7 +41,12 @@ class Report(object):
         with open(self.data_path, "r+") as f:
             data = f.read()
             data = json.loads(data)
+            data["jinji_lxr"]=self.emer_person
+            data["jinji_guanxi"]=self.relation
+            data["jiji_mobile"]=self.emer_phone
             data["_token"]=token
+        print(data)
+
 
         headers = {
             'authority': 'weixine.ustc.edu.cn',
@@ -69,10 +77,19 @@ class Report(object):
             reporttime = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S %z")
             print("Reporttime : " + format(reporttime))
             timenow = datetime.datetime.now(pytz.timezone('Asia/Shanghai'))
+            print("Nowtime : " + format(timenow))
             delta = timenow - reporttime
-            print("{} second(s) before.".format(delta.seconds))
-            if delta.seconds < 120:
+            delta_nega = reporttime - timenow
+            print("Delta is ")
+            print(delta)
+            print("Delta_Negative is ")
+            print(delta_nega)
+            if delta.seconds < 120 or delta_nega.seconds < 120:
                 flag = True
+            if delta.seconds < delta_nega.seconds:
+                print("{} second(s) before.".format(delta.seconds))
+            else:
+                print("{} second(s) before.".format(delta_nega.seconds))
         if flag == False:
             print("Report FAILED!")
         else:
@@ -102,8 +119,11 @@ if __name__ == "__main__":
     parser.add_argument('data_path', help='path to your own data used for post method', type=str)
     parser.add_argument('stuid', help='your student number', type=str)
     parser.add_argument('password', help='your CAS password', type=str)
+    parser.add_argument('emer_person', help='emergency person', type=str)
+    parser.add_argument('relation', help='relationship between you and he/she', type=str)
+    parser.add_argument('emer_phone', help='phone number', type=str)
     args = parser.parse_args()
-    autorepoter = Report(stuid=args.stuid, password=args.password, data_path=args.data_path)
+    autorepoter = Report(stuid=args.stuid, password=args.password, data_path=args.data_path, emer_person=args.emer_person, relation=args.relation, emer_phone=args.emer_phone)
     count = 5
     while count != 0:
         ret = autorepoter.report()
