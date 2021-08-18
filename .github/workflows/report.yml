@@ -33,6 +33,9 @@ jobs:
         EMER_PHONE: ${{ secrets.Emer_phone }}
         STUID2: ${{ secrets.Stuid2 }}
         PASSWORD2: ${{ secrets.Password2 }}
+        EMER_PERSON2: ${{ secrets.Emer_person2 }}
+        EMER_RELA2: ${{ secrets.Emer_rela2 }}
+        EMER_PHONE2: ${{ secrets.Emer_phone2 }}
       run: |
         python report.py data_athome.json "$STUID" "$PASSWORD" "$EMER_PERSON" "$EMER_RELA" "$EMER_PHONE"
-        python report.py data_atschool.json "$STUID2" "$PASSWORD2"
+        python report.py data_atschool.json "$STUID2" "$PASSWORD2" "$EMER_PERSON2" "$EMER_RELA2" "$EMER_PHONE2"
