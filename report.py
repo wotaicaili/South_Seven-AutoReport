@@ -8,6 +8,8 @@ import re
 import sys
 import argparse
 from bs4 import BeautifulSoup
+import PIL
+import pytesseract
 
 class Report(object):
     def __init__(self, stuid, password, data_path, emer_person, relation, emer_phone):
@@ -97,21 +99,43 @@ class Report(object):
         return flag
 
     def login(self):
+        s = requests.Session()
+        s.mount("https://", HTTPAdapter(max_retries=retries))
+        s.headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Edg/92.0.902.67"
         url = "https://passport.ustc.edu.cn/login?service=http%3A%2F%2Fweixine.ustc.edu.cn%2F2020%2Fcaslogin"
+        r = s.get(url, params={"service": CAS_RETURN_URL})
+        x = re.search(r"""<input.*?name="CAS_LT".*?>""", r.text).group(0)
+        cas_lt = re.search(r'value="(LT-\w*)"', x).group(1)
+
+        CAS_CAPTCHA_URL = "https://passport.ustc.edu.cn/validatecode.jsp?type=login"        
+        r = s.get(CAS_CAPTCHA_URL)
+        img = PIL.Image.open(io.BytesIO(r.content))
+        pix = img.load()
+        for i in range(img.size[0]):
+            for j in range(img.size[1]):
+                r, g, b = pix[i, j]
+                if g >= 40 and r < 80:
+                    pix[i, j] = (0, 0, 0)
+                else:
+                    pix[i, j] = (255, 255, 255)
+        lt_code = pytesseract.image_to_string(img).strip()
+        
+        
         data = {
             'model': 'uplogin.jsp',
             'service': 'https://weixine.ustc.edu.cn/2020/caslogin',
             'username': self.stuid,
             'password': str(self.password),
             'warn': '',
-            'showCode': '',
+            'showCode': '1',
             'button': '',
+            'CAS_LT': cas_lt,
+            'LT': lt_code
         }
-        session = requests.Session()
-        session.post(url, data=data)
+        s.post(url, data=data)
 
         print("login...")
-        return session
+        return s
 
 
 if __name__ == "__main__":
