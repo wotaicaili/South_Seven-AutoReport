@@ -12,7 +12,7 @@ import PIL
 import pytesseract
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-
+CAS_RETURN_URL = "https://weixine.ustc.edu.cn/2020/caslogin"
 class Report(object):
     def __init__(self, stuid, password, data_path, emer_person, relation, emer_phone):
         self.stuid = stuid
