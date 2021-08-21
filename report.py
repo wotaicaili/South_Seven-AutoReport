@@ -10,6 +10,7 @@ import argparse
 from bs4 import BeautifulSoup
 import PIL
 import pytesseract
+from requests.adapters import HTTPAdapter
 
 class Report(object):
     def __init__(self, stuid, password, data_path, emer_person, relation, emer_phone):
