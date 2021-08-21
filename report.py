@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 import PIL
 import pytesseract
 from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 class Report(object):
     def __init__(self, stuid, password, data_path, emer_person, relation, emer_phone):
@@ -100,6 +101,9 @@ class Report(object):
         return flag
 
     def login(self):
+        retries = Retry(total=5,
+                        backoff_factor=0.5,
+                        status_forcelist=[500, 502, 503, 504])
         s = requests.Session()
         s.mount("https://", HTTPAdapter(max_retries=retries))
         s.headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Edg/92.0.902.67"
