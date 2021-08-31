@@ -2,7 +2,7 @@
 
 ## 说明
 
-**本打卡脚本仅供学习交流使用，请勿过分依赖。开发者对使用或不使用本脚本造成的问题不负任何责任，不对脚本执行效果做出任何担保，原则上不提供任何形式的技术支持。**
+**本打卡脚本仅供学习交流使用，请勿过分依赖。 开发者对使用或不使用本脚本造成的问题不负任何责任，不对脚本执行效果做出任何担保，原则上不提供任何形式的技术支持。**
 
 ## 更新记录
 - 新增：
@@ -26,7 +26,7 @@
 
 4. 点击Actions选项卡，点击`I understand my workflows, go ahead and enable them`.
 
-5. 为保护隐私，需要将私人信息放入secrets中传递参数。点击Settings选项卡，点击左侧Secrets，点击New secret，创建名为`STUID`，值为自己学号的secret。用同样方法，创建名为`PASSWORD`，值为自己中国滑稽大学统一身份认证密码的secret。并接着创建EMER_PERSON EMER_RELA EMER_PHONE三个secret，分别代表打卡界面的紧急联系人，与ta的关系，紧急联系人电话。这几个值不会被公开。
+5. 为保护隐私，需要将私人信息放入secrets中传递参数。点击Settings选项卡，点击左侧Secrets，点击New secret，创建名为`STUID`，值为自己学号的secret。用同样方法，创建名为`PASSWORD`，值为自己中国滑稽大学统一身份认证密码的secret。并接着创建`EMER_PERSON` `EMER_RELA` `EMER_PHONE`三个secret，分别代表打卡界面的紧急联系人，与ta的关系，紧急联系人电话。这几个值不会被公开。
 
    ![secrets](imgs/image-20200826215037042.png)
 
