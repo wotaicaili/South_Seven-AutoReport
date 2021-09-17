@@ -40,6 +40,43 @@ class Report(object):
                 loginsuccess = True
         if not loginsuccess:
             return False
+
+        # 自动出校报备
+        ret = session.get("https://weixine.ustc.edu.cn/2020/apply/daliy", allow_redirects=False)
+        print(ret.status_code)
+        print(ret.url)
+        if (ret.status_code == 200):
+        	#没有报备过
+        	print("没有报备过, 开始报备.")
+        	data = ret.text
+        	data = data.encode('ascii','ignore').decode('utf-8','ignore')
+        	soup = BeautifulSoup(data, 'html.parser')
+        	token2 = soup.find("input", {"name": "_token"})['value']
+        	start_date = soup.find("input", {"id": "start_date"})['value']
+        	end_date = soup.find("input", {"id": "end_date"})['value']
+        	
+        	#print("{}---{}".format(start_date, end_date))
+
+        	REPORT_URL = "https://weixine.ustc.edu.cn/2020/apply/daliy/post"
+        	REPORT_DATA = {
+        		'_token': token2,
+        		'start_date': start_date,
+        		'end_date': end_date
+        	}
+
+        	ret = session.post(url=REPORT_URL, data=REPORT_DATA)
+       		print(ret.status_code)
+       		#print(ret.text)
+
+        elif(ret.status_code == 302):
+        	print("你这周已经报备过了.")
+        	#已经报备过
+        else:
+        	print("error! code "+ret.status_code)
+        	#出错
+
+
+
         data = getform.text
         data = data.encode('ascii','ignore').decode('utf-8','ignore')
         soup = BeautifulSoup(data, 'html.parser')
