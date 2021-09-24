@@ -177,7 +177,7 @@ class Report(object):
             'CAS_LT': cas_lt,
             'LT': lt_code
         }
-        s.post("https://passport.ustc.edu.cn/login", data=data)
+        s.post(url, data=data)
 
         print("login...")
         return s
