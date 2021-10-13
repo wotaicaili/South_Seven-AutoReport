@@ -55,7 +55,7 @@ class Report(object):
         	start_date = soup.find("input", {"id": "start_date"})['value']
         	end_date = soup.find("input", {"id": "end_date"})['value']
         	
-        	#print("{}---{}".format(start_date, end_date))
+        	print("{}---{}".format(start_date, end_date))
 
         	REPORT_URL = "https://weixine.ustc.edu.cn/2020/apply/daliy/post"
         	REPORT_DATA = {
@@ -66,7 +66,7 @@ class Report(object):
 
         	ret = session.post(url=REPORT_URL, data=REPORT_DATA)
        		print(ret.status_code)
-       		#print(ret.text)
+       		print(ret.text)
 
         elif(ret.status_code == 302):
         	print("你这周已经报备过了.")
