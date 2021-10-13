@@ -43,11 +43,11 @@ class Report(object):
 
         # 自动出校报备
         ret = session.get("https://weixine.ustc.edu.cn/2020/apply/daliy", allow_redirects=False)
-        print(ret.status_code)
-        print(ret.url)
+        #print(ret.status_code)
+        #print(ret.url)
         if (ret.status_code == 200):
-        	#没有报备过
-        	print("没有报备过, 开始报备.")
+        	#每日报备
+        	print("开始例行报备.")
         	data = ret.text
         	data = data.encode('ascii','ignore').decode('utf-8','ignore')
         	soup = BeautifulSoup(data, 'html.parser')
@@ -66,11 +66,11 @@ class Report(object):
 
         	ret = session.post(url=REPORT_URL, data=REPORT_DATA)
        		print(ret.status_code)
-       		print(ret.text)
+            #print(ret.text)
 
         elif(ret.status_code == 302):
         	print("你这周已经报备过了.")
-        	#已经报备过
+        	#老页面的判定, 新页面已经不需要
         else:
         	print("error! code "+ret.status_code)
         	#出错
@@ -89,7 +89,7 @@ class Report(object):
             data["jinji_guanxi"]=self.relation
             data["jiji_mobile"]=self.emer_phone
             data["_token"]=token
-        print(data)
+        #print(data)
 
 
         headers = {
@@ -179,7 +179,7 @@ class Report(object):
         }
         s.post(url, data=data)
 
-        print("login...")
+        print("lt-code is {}, login...".format(lt_code))
         return s
 
 
