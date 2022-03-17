@@ -80,7 +80,7 @@ python report.py [DATA] [STUID] [PASSWORD] [EMER_PERSON] [EMER_RELA] [EMER_PHONE
 ## 许可
 
 MIT License
-
+ 
 Copyright (c) 2020 BwZhang
 
 Copyright (c) 2020 Violin Wang
