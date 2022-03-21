@@ -131,9 +131,7 @@ class Report(object):
                 'return_college[]': '南校区',
                 'return_college[]': '北校区',
                 'return_college[]': '中校区',
-                'return_college[]': '高新校区',
-                'return_college[]': '先研院',
-                'return_college[]': '国金院'
+                't': 3,
             }
 
             ret = session.post(url=REPORT_URL, data=REPORT_DATA)
