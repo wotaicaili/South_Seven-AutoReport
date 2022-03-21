@@ -126,11 +126,11 @@ class Report(object):
                 '_token': token2,
                 'start_date': start_date,
                 'end_date': end_date,
-                'return_college%5B%5D': '%E4%B8%9C%E6%A0%A1%E5%8C%BA',
-                'return_college%5B%5D': '%E8%A5%BF%E6%A0%A1%E5%8C%BA',
-                'return_college%5B%5D': '%E5%8D%97%E6%A0%A1%E5%8C%BA',
-                'return_college%5B%5D': '%E5%8C%97%E6%A0%A1%E5%8C%BA',
-                'return_college%5B%5D': '%E4%B8%AD%E6%A0%A1%E5%8C%BA',
+                'return_college[]': '东校区',
+                'return_college[]': '西校区',
+                'return_college[]': '中校区',
+                'return_college[]': '南校区',
+                'return_college[]': '北校区',
                 't': 3,
             }
 
