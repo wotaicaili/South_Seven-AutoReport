@@ -69,7 +69,6 @@ class Report(object):
             'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
             'referer': 'https://weixine.ustc.edu.cn/2020/home',
             'accept-language': 'zh-CN,zh;q=0.9',
-            'Connection': 'close',
             'cookie': "PHPSESSID=" + cookies.get("PHPSESSID") + ";XSRF-TOKEN=" + cookies.get("XSRF-TOKEN") + ";laravel_session="+cookies.get("laravel_session"),
         }
 
@@ -82,6 +81,7 @@ class Report(object):
         token = soup.find(
             "span", {"style": "position: relative; top: 5px; color: #666;"})
         flag = False
+        print(token.text)
         if pattern.search(token.text) is not None:
             date = pattern.search(token.text).group()
             print("Latest report: " + date)
