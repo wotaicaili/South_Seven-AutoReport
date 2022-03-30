@@ -24,6 +24,8 @@ class Report(object):
         self.emer_person = emer_person
         self.relation = relation
         self.emer_phone = emer_phone
+        self.dorm_building = dorm_building
+        self.dorm = dorm
 
     def report(self):
         loginsuccess = False
@@ -52,6 +54,8 @@ class Report(object):
             data["jinji_lxr"]=self.emer_person
             data["jinji_guanxi"]=self.relation
             data["jiji_mobile"]=self.emer_phone
+            data["dorm_building"]=self.dorm_building
+            data["dorm"]=self.dorm
             data["_token"]=token
         #print(data)
 
@@ -196,8 +200,10 @@ if __name__ == "__main__":
     parser.add_argument('emer_person', help='emergency person', type=str)
     parser.add_argument('relation', help='relationship between you and he/she', type=str)
     parser.add_argument('emer_phone', help='phone number', type=str)
+    parser.add_argument('dorm_building', help='dorm building num', type=str)
+    parser.add_argument('dorm', help='dorm number', type=str)
     args = parser.parse_args()
-    autorepoter = Report(stuid=args.stuid, password=args.password, data_path=args.data_path, emer_person=args.emer_person, relation=args.relation, emer_phone=args.emer_phone)
+    autorepoter = Report(stuid=args.stuid, password=args.password, data_path=args.data_path, emer_person=args.emer_person, relation=args.relation, emer_phone=args.emer_phone, dorm_building=args.dorm_building, dorm=args.dorm)
     count = 5
     while count != 0:
         ret = autorepoter.report()
