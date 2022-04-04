@@ -132,6 +132,7 @@ class Report(object):
                 'start_date': start_date,
                 'end_date': end_date,
                 'return_college[]': RETURN_COLLEGE,
+                'reason': "上课",
                 't': 3,
             }
 
