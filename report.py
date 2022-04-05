@@ -81,7 +81,7 @@ class Report(object):
         token = soup.find(
             "span", {"style": "position: relative; top: 5px; color: #666;"})
         flag = False
-        print(token.text)
+        print(token)
         if pattern.search(token.text) is not None:
             date = pattern.search(token.text).group()
             print("Latest report: " + date)
