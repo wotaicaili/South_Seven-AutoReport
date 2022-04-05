@@ -1,6 +1,6 @@
 # Auto-report action script, 3 times a day
 
-name: Auto-report action
+name: futari report action
 
 on: 
   push:
@@ -42,3 +42,4 @@ jobs:
         DORM : ${{ secrets.DORM }}
       run: |
         python report.py data_atschool.json "$STUID" "$PASSWORD" "$EMER_PERSON" "$EMER_RELA" "$EMER_PHONE" "$DORM_BUILDING" "$DORM"
+        python report.py data_atschool.json "$STUID2" "$PASSWORD2" "$EMER_PERSON2" "$EMER_RELA2" "$EMER_PHONE2" "$DORM_BUILDING" "$DORM"
