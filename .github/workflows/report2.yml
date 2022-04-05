@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - master
+      - futari_main
   schedule:
     - cron: '10 0,6,12,18 * * *'
 
@@ -26,6 +27,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pillow pytesseract requests
+        git checkout -b futari_main
     - name: Run report script
       env:
         STUID: ${{ secrets.Stuid }}
@@ -41,5 +43,6 @@ jobs:
         DORM_BUILDING: ${{ secrets.DORM_BUILDING }}
         DORM : ${{ secrets.DORM }}
       run: |
+        curl ip.sb
         python report.py data_atschool.json "$STUID" "$PASSWORD" "$EMER_PERSON" "$EMER_RELA" "$EMER_PHONE" "$DORM_BUILDING" "$DORM"
         python report.py data_atschool.json "$STUID2" "$PASSWORD2" "$EMER_PERSON2" "$EMER_RELA2" "$EMER_PHONE2" "$DORM_BUILDING" "$DORM"
