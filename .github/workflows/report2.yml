@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - master
+      - futari_main
   schedule:
     - cron: '10 0,6,12,18 * * *'
 
