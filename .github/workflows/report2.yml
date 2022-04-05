@@ -2,6 +2,7 @@
 
 name: futari report action
 
+
 on: 
   push:
     branches:
