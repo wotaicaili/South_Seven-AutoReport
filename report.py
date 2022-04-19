@@ -84,9 +84,11 @@ class Report(object):
             print("unknown error, code: "+str(res.status_code))
         
         # 自动出校报备
-        ret = session.get("https://weixine.ustc.edu.cn/2020/apply/daliy/i")
+        ret = session.get("https://weixine.ustc.edu.cn/2020/apply/daliy/i?t=3")
         #print(ret.status_code)
-        #print(ret.url)
+        if (ret.url == "https://weixine.ustc.edu.cn/2020/upload/xcm"):
+            print("未上传两码，请手动上传两码或杀了制定这个规则的壬的马。")
+            return True
         if (ret.status_code == 200):
             #每日报备
             print("开始例行报备.")
