@@ -110,7 +110,7 @@ class Report(object):
                 print(f"ignore {description}.")
                 continue
             if(self.pic[idx - 1] == ''):
-                self.pic[idx - 1] == default_pic[idx - 1]
+                self.pic[idx - 1] == DEFAULT_PIC[idx - 1]
             print(self.pic[idx - 1])
             ret = session.get(self.pic[idx - 1])
             blob = ret.content
