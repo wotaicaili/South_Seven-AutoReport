@@ -89,11 +89,13 @@ class Report(object):
         url = "https://weixine.ustc.edu.cn/2020/daliy_report"
         resp=session.post(url, data=data, headers=headers)
         print(resp)
-        res = session.get("https://weixine.ustc.edu.cn/2020/apply/daliy/i?t=3", allow_redirects=False)
-        if(res.status_code == 302):
-            print("report failed!")
-        elif(res.status_code == 200):
+        res = session.get("https://weixine.ustc.edu.cn/2020/apply/daliy/i?t=3")
+        if(res.status_code < 400 and res.url == "https://weixine.ustc.edu.cn/2020/upload/xcm"):
             print("report success!")
+        elif(res.status_code < 400 and res.url != "https://weixine.ustc.edu.cn/2020/upload/xcm"):
+            print(res.url)
+            print("report failed")
+            return False
         else:
             print("unknown error, code: "+str(res.status_code))
             
@@ -110,7 +112,7 @@ class Report(object):
                 print(f"ignore {description}.")
                 continue
             if(self.pic[idx - 1] == ''):
-                self.pic[idx - 1] == DEFAULT_PIC[idx - 1]
+                self.pic[idx - 1] = DEFAULT_PIC[idx - 1]
             print(self.pic[idx - 1])
             ret = session.get(self.pic[idx - 1])
             blob = ret.content
@@ -121,6 +123,7 @@ class Report(object):
                 continue        
 
             #print(r.text)
+            r = session.get(UPLOAD_PAGE_URL)
             x = re.search(r"""<input.*?name="_token".*?>""", r.text).group(0)
             re.search(r'value="(\w*)"', x).group(1)
             
