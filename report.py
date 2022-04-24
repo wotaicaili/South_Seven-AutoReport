@@ -1,3 +1,4 @@
+#!/bin/python3
 # encoding=utf8 
 import requests
 import json
@@ -16,8 +17,17 @@ import pytesseract
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 CAS_RETURN_URL = "https://weixine.ustc.edu.cn/2020/caslogin"
+UPLOAD_PAGE_URL = "https://weixine.ustc.edu.cn/2020/upload/xcm"
+UPLOAD_IMAGE_URL = "https://weixine.ustc.edu.cn/2020/upload/{}/image"
+UPLOAD_INFO = [
+    (1, "14-day Big Data Trace Card"),
+    (2, "An Kang code"),
+]
+DEFAULT_PIC = ['https://raw.githubusercontent.com/pipixia244/South_Seven-AutoReport/master/14day.jpg', 
+               'https://raw.githubusercontent.com/pipixia244/South_Seven-AutoReport/master/ankang.jpg']
+
 class Report(object):
-    def __init__(self, stuid, password, data_path, emer_person, relation, emer_phone, dorm_building, dorm):
+    def __init__(self, stuid, password, data_path, emer_person, relation, emer_phone, dorm_building, dorm, _14days_pic, ankang_pic):
         self.stuid = stuid
         self.password = password
         self.data_path = data_path
@@ -26,8 +36,11 @@ class Report(object):
         self.emer_phone = emer_phone
         self.dorm_building = dorm_building
         self.dorm = dorm
+        self.pic= [_14days_pic, ankang_pic]
 
     def report(self):
+        
+        # 统一验证登录
         loginsuccess = False
         retrycount = 5
         while (not loginsuccess) and retrycount:
@@ -43,6 +56,7 @@ class Report(object):
         if not loginsuccess:
             return False
 
+        # 获取基本数据信息
         data = getform.text
         data = data.encode('ascii','ignore').decode('utf-8','ignore')
         soup = BeautifulSoup(data, 'html.parser')
@@ -59,7 +73,7 @@ class Report(object):
             data["_token"]=token
         #print(data)
 
-
+        # 自动健康打卡
         headers = {
             'authority': 'weixine.ustc.edu.cn',
             'origin': 'https://weixine.ustc.edu.cn',
@@ -82,6 +96,56 @@ class Report(object):
             print("report success!")
         else:
             print("unknown error, code: "+str(res.status_code))
+            
+        # 自动上传健康码
+        can_upload_code = 1              
+        r = session.get(UPLOAD_PAGE_URL)
+        pos = r.text.find("每周可上报时间为周一凌晨0:00至周日中午12:00,其余时间将关闭相关功能。")
+        #print("position: "+str(pos))
+        if(pos != -1):
+            print("当前处于不可上报时间，请换其他时间上传健康码。")
+            can_upload_code = 0
+        for idx, description in UPLOAD_INFO:
+            if(can_upload_code == 0):
+                print(f"ignore {description}.")
+                continue
+            if(self.pic[idx - 1] == ''):
+                self.pic[idx - 1] == default_pic[idx - 1]
+            print(self.pic[idx - 1])
+            ret = session.get(self.pic[idx - 1])
+            blob = ret.content
+            print(len(blob))
+            print(ret.status_code)
+            if blob == None or ret.status_code != 200:
+                print(f"ignore {description}.")
+                continue        
+
+            #print(r.text)
+            x = re.search(r"""<input.*?name="_token".*?>""", r.text).group(0)
+            re.search(r'value="(\w*)"', x).group(1)
+            
+            url = UPLOAD_IMAGE_URL.format(idx)
+            
+            payload = {
+            "_token": token,
+            "id": f"WU_FILE_{idx}",
+            "name": f"{description}.png",
+            "type": "image/png",
+            "lastModifiedDate": datetime.datetime.now()
+                .strftime("%a %b %d %Y %H:%M:%S GMT+0800 (China Standard Time)"),
+            "size": f"{len(blob)}",
+            }
+            payload_files = {"file": (payload["name"], blob)}
+            headers_upload = session.headers
+            headers_upload['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.100 Safari/537.36'
+            r = session.post(url, data=payload, files=payload_files, headers=headers_upload)
+            print(r)
+            print(r.text)
+            r.raise_for_status()
+            print(f"Uploaded {description}: {r.json()['status']}")
+            
+            
+            
         
         # 自动出校报备
         ret = session.get("https://weixine.ustc.edu.cn/2020/apply/daliy/i?t=3")
@@ -179,8 +243,12 @@ if __name__ == "__main__":
     parser.add_argument('emer_phone', help='phone number', type=str)
     parser.add_argument('dorm_building', help='dorm building num', type=str)
     parser.add_argument('dorm', help='dorm number', type=str)
+    parser.add_argument('_14days_pic', help='14 days Big Data Trace Card', type=str)
+    parser.add_argument('ankang_pic', help='An Kang Health Code', type=str)
     args = parser.parse_args()
-    autorepoter = Report(stuid=args.stuid, password=args.password, data_path=args.data_path, emer_person=args.emer_person, relation=args.relation, emer_phone=args.emer_phone, dorm_building=args.dorm_building, dorm=args.dorm)
+    autorepoter = Report(stuid=args.stuid, password=args.password, data_path=args.data_path, emer_person=args.emer_person, 
+                         relation=args.relation, emer_phone=args.emer_phone, dorm_building=args.dorm_building, dorm=args.dorm, 
+                         _14days_pic=args._14days_pic, ankang_pic=args.ankang_pic)
     count = 5
     while count != 0:
         ret = autorepoter.report()
