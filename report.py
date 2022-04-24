@@ -113,11 +113,11 @@ class Report(object):
                 continue
             if(self.pic[idx - 1] == ''):
                 self.pic[idx - 1] = DEFAULT_PIC[idx - 1]
-            print(self.pic[idx - 1])
+            #print(self.pic[idx - 1])
             ret = session.get(self.pic[idx - 1])
             blob = ret.content
-            print(len(blob))
-            print(ret.status_code)
+            #print(len(blob))
+            #print(ret.status_code)
             if blob == None or ret.status_code != 200:
                 print(f"ignore {description}.")
                 continue        
