@@ -143,7 +143,7 @@ class Report(object):
             headers_upload['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.100 Safari/537.36'
             r = session.post(url, data=payload, files=payload_files, headers=headers_upload)
             print(r)
-            print(r.text)
+            #print(r.text)
             r.raise_for_status()
             print(f"Uploaded {description}: {r.json()['status']}")
             
