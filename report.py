@@ -18,7 +18,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 CAS_RETURN_URL = "https://weixine.ustc.edu.cn/2020/caslogin"
 UPLOAD_PAGE_URL = "https://weixine.ustc.edu.cn/2020/upload/xcm"
-UPLOAD_IMAGE_URL = "https://weixine.ustc.edu.cn/2020/upload/{}/image"
+UPLOAD_IMAGE_URL = "https://weixine.ustc.edu.cn/2020img/api/upload_for_student"
 UPLOAD_INFO = [
     (1, "14-day Big Data Trace Card"),
     (2, "An Kang code"),
@@ -88,7 +88,7 @@ class Report(object):
 
         url = "https://weixine.ustc.edu.cn/2020/daliy_report"
         resp=session.post(url, data=data, headers=headers)
-        print(resp)
+        #print(resp)
         res = session.get("https://weixine.ustc.edu.cn/2020/apply/daliy/i?t=3")
         if(res.status_code < 400 and (res.url == "https://weixine.ustc.edu.cn/2020/upload/xcm" or res.url == "https://weixine.ustc.edu.cn/2020/apply/daliy/i?t=3")):
             print("report success!")
@@ -126,11 +126,23 @@ class Report(object):
             r = session.get(UPLOAD_PAGE_URL)
             x = re.search(r"""<input.*?name="_token".*?>""", r.text).group(0)
             re.search(r'value="(\w*)"', x).group(1)
+            search_payload = r'''formData:{
+                    _token:  '(\w{40})',
+                    'gid': '(\d{10})',
+                    'sign': '(\S{36})',
+                    't' : 1
+                }'''
+            _token = re.search(search_payload, r.text).group(1);
+            gid = re.search(search_payload, r.text).group(2);
+            sign = re.search(search_payload, r.text).group(3);
             
-            url = UPLOAD_IMAGE_URL.format(idx)
+            url = UPLOAD_IMAGE_URL
             
             payload = {
-            "_token": token,
+            "_token": _token,
+            "gid": f"{gid}",
+            "sign": f"{sign}",
+            "t": f"{idx}",
             "id": f"WU_FILE_{idx}",
             "name": f"{description}.png",
             "type": "image/png",
@@ -142,7 +154,7 @@ class Report(object):
             headers_upload = session.headers
             headers_upload['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.100 Safari/537.36'
             r = session.post(url, data=payload, files=payload_files, headers=headers_upload)
-            print(r)
+            #print(r)
             #print(r.text)
             r.raise_for_status()
             print(f"Uploaded {description}: {r.json()['status']}")
@@ -168,7 +180,7 @@ class Report(object):
             
             print("{}---{}".format(start_date, end_date))
 
-            REPORT_URL = "https://weixine.ustc.edu.cn/2020/apply/daliy/post"
+            REPORT_URL = "https://weixine.ustc.edu.cn/2020/apply/daliy/ipost"
             RETURN_COLLEGE = {'东校区', '西校区', '中校区', '南校区', '北校区'}
             REPORT_DATA = {
                 '_token': token2,
@@ -180,8 +192,10 @@ class Report(object):
             }
 
             ret = session.post(url=REPORT_URL, data=REPORT_DATA)
-            print(ret.status_code)
-            #print(ret.text)
+            if ret.status_code == 200:
+                print("success! code: "+str(ret.status_code))
+            else:
+                print("error occured, code: "+str(ret.status_code))
 
         elif(ret.status_code == 302):
             print("你这周已经报备过了.")
