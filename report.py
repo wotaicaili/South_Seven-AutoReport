@@ -100,64 +100,80 @@ class Report(object):
             print("unknown error, code: "+str(res.status_code))
             
         # 自动上传健康码
-        can_upload_code = 1              
-        r = session.get(UPLOAD_PAGE_URL)
-        pos = r.text.find("每周可上报时间为周一凌晨0:00至周日中午12:00,其余时间将关闭相关功能。")
-        #print("position: "+str(pos))
-        if(pos != -1):
-            print("当前处于不可上报时间，请换其他时间上传健康码。")
-            can_upload_code = 0
-        for idx, description in UPLOAD_INFO:
-            if(can_upload_code == 0):
-                print(f"ignore {description}.")
-                continue
-            if(self.pic[idx - 1] == ''):
-                self.pic[idx - 1] = DEFAULT_PIC[idx - 1]
-            #print(self.pic[idx - 1])
-            ret = session.get(self.pic[idx - 1])
-            blob = ret.content
-            #print(len(blob))
-            #print(ret.status_code)
-            if blob == None or ret.status_code != 200:
-                print(f"ignore {description}.")
-                continue        
-
-            #print(r.text)
+        is_new_upload = 0
+        ret = session.get("https://weixine.ustc.edu.cn/2020/apply/daliy/i?t=3")
+        if (ret.url == "https://weixine.ustc.edu.cn/2020/upload/xcm"):
+            is_new_upload = 1
+            can_upload_code = 1              
             r = session.get(UPLOAD_PAGE_URL)
-            x = re.search(r"""<input.*?name="_token".*?>""", r.text).group(0)
-            re.search(r'value="(\w*)"', x).group(1)
-            search_payload = r'''formData:{
-                    _token:  '(\w{40})',
-                    'gid': '(\d{10})',
-                    'sign': '(\S{36})',
-                    't' : 1
-                }'''
-            _token = re.search(search_payload, r.text).group(1);
-            gid = re.search(search_payload, r.text).group(2);
-            sign = re.search(search_payload, r.text).group(3);
-            
-            url = UPLOAD_IMAGE_URL
-            
-            payload = {
-            "_token": _token,
-            "gid": f"{gid}",
-            "sign": f"{sign}",
-            "t": f"{idx}",
-            "id": f"WU_FILE_{idx}",
-            "name": f"{description}.png",
-            "type": "image/png",
-            "lastModifiedDate": datetime.datetime.now()
-                .strftime("%a %b %d %Y %H:%M:%S GMT+0800 (China Standard Time)"),
-            "size": f"{len(blob)}",
-            }
-            payload_files = {"file": (payload["name"], blob)}
-            headers_upload = session.headers
-            headers_upload['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.100 Safari/537.36'
-            r = session.post(url, data=payload, files=payload_files, headers=headers_upload)
-            #print(r)
-            #print(r.text)
-            r.raise_for_status()
-            print(f"Uploaded {description}: {r.json()['status']}")
+            pos = r.text.find("每周可上报时间为周一凌晨0:00至周日中午12:00,其余时间将关闭相关功能。")
+            #print("position: "+str(pos))
+            if(pos != -1):
+                print("当前处于不可上报时间，请换其他时间上传健康码。")
+                can_upload_code = 0
+            for idx, description in UPLOAD_INFO:
+                if(can_upload_code == 0):
+                    print(f"ignore {description}.")
+                    continue
+                if(self.pic[idx - 1] == ''):
+                    self.pic[idx - 1] = DEFAULT_PIC[idx - 1]
+                #print(self.pic[idx - 1])
+                ret = session.get(self.pic[idx - 1])
+                blob = ret.content
+                #print(len(blob))
+                #print(ret.status_code)
+                if blob == None or ret.status_code != 200:
+                    print(f"ignore {description}.")
+                    continue        
+
+                #print(r.text)
+                r = session.get(UPLOAD_PAGE_URL)
+                #print(r.text)
+                x = re.search(r"""<input.*?name="_token".*?>""", r.text).group(0)
+                re.search(r'value="(\w*)"', x).group(1)
+                search_payload_1 = r"_token:  '(\w*)'"
+                search_payload_2 = r"'gid': '(\d*)'"
+                search_payload_3 = r"'sign': '(\S*)'"
+                _token = re.search(search_payload_1, r.text).group(1);
+                gid = re.search(search_payload_2, r.text).group(1);
+                sign = re.search(search_payload_3, r.text).group(1);
+                
+                # search_payload = r'''formData:{
+                #     _token:  '(\w{40})',
+                #     'gid': '(\d{10})',
+                #     'sign': '(\S{36})',
+                #     't' : 1
+                # }'''
+                # _token = re.search(search_payload, r.text).group(1);
+                # gid = re.search(search_payload, r.text).group(2);
+                # sign = re.search(search_payload, r.text).group(3);
+                
+                # print(_token)
+                # print(gid)
+                # print(sign)
+                
+                url = UPLOAD_IMAGE_URL
+                
+                payload = {
+                "_token": _token,
+                "gid": f"{gid}",
+                "sign": f"{sign}",
+                "t": f"{idx}",
+                "id": f"WU_FILE_{idx}",
+                "name": f"{description}.png",
+                "type": "image/png",
+                "lastModifiedDate": datetime.datetime.now()
+                    .strftime("%a %b %d %Y %H:%M:%S GMT+0800 (China Standard Time)"),
+                "size": f"{len(blob)}",
+                }
+                payload_files = {"file": (payload["name"], blob)}
+                headers_upload = session.headers
+                headers_upload['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.100 Safari/537.36'
+                r = session.post(url, data=payload, files=payload_files, headers=headers_upload)
+                #print(r)
+                #print(r.text)
+                r.raise_for_status()
+                print(f"Uploaded {description}: {r.json()['status']}")
             
             
             
@@ -166,45 +182,51 @@ class Report(object):
         ret = session.get("https://weixine.ustc.edu.cn/2020/apply/daliy/i?t=3")
         #print(ret.status_code)
         if (ret.url == "https://weixine.ustc.edu.cn/2020/upload/xcm"):
-            print("未上传两码，请手动上传两码或杀了制定这个规则的壬的马。")
-            return True
-        if (ret.status_code == 200):
-            #每日报备
-            print("开始例行报备.")
-            data = ret.text
-            data = data.encode('ascii','ignore').decode('utf-8','ignore')
-            soup = BeautifulSoup(data, 'html.parser')
-            token2 = soup.find("input", {"name": "_token"})['value']
-            start_date = soup.find("input", {"id": "start_date"})['value']
-            end_date = soup.find("input", {"id": "end_date"})['value']
-            
-            print("{}---{}".format(start_date, end_date))
-
-            REPORT_URL = "https://weixine.ustc.edu.cn/2020/apply/daliy/ipost"
-            RETURN_COLLEGE = {'东校区', '西校区', '中校区', '南校区', '北校区'}
-            REPORT_DATA = {
-                '_token': token2,
-                'start_date': start_date,
-                'end_date': end_date,
-                'return_college[]': RETURN_COLLEGE,
-                'reason': "上课/自习",
-                't': 3,
-            }
-
-            ret = session.post(url=REPORT_URL, data=REPORT_DATA)
-            if ret.status_code == 200:
-                print("success! code: "+str(ret.status_code))
-            else:
-                print("error occured, code: "+str(ret.status_code))
-
-        elif(ret.status_code == 302):
-            print("你这周已经报备过了.")
-            #老页面的判定, 新页面已经不需要
-        else:
-            print("error! code "+ret.status_code)
-            #出错
+            print("Upload Code Img Error.")
             return False
-        return True
+            
+        print("开始例行报备.")
+        data = ret.text
+        data = data.encode('ascii','ignore').decode('utf-8','ignore')
+        soup = BeautifulSoup(data, 'html.parser')
+        token2 = soup.find("input", {"name": "_token"})['value']
+        start_date = soup.find("input", {"id": "start_date"})['value']
+        end_date = soup.find("input", {"id": "end_date"})['value']
+        
+        print("{}---{}".format(start_date, end_date))
+        REPORT_URL = "https://weixine.ustc.edu.cn/2020/apply/daliy/ipost"
+        RETURN_COLLEGE = {'东校区', '西校区', '中校区', '南校区', '北校区'}
+        REPORT_DATA = {
+            '_token': token2,
+            'start_date': start_date,
+            'end_date': end_date,
+            'return_college[]': RETURN_COLLEGE,
+            'reason': "上课/自习",
+            't': 3,
+        }
+        ret = session.post(url=REPORT_URL, data=REPORT_DATA)
+        
+        # 删除占用码(可选功能, 默认开启, 若想关闭请直接注释掉)
+        if (is_new_upload == 1):
+            print("delete.")
+            header = session.headers
+            header['referer'] = "https://weixine.ustc.edu.cn/2020/upload/xcm"
+            header['X-CSRF-TOKEN'] = token2
+            ret1 = session.post("https://weixine.ustc.edu.cn/2020/upload/1/delete", headers=header)
+            ret2 = session.post("https://weixine.ustc.edu.cn/2020/upload/2/delete", headers=header)
+            if(ret1.status_code < 400 and ret2.status_code < 400):
+                print("delete success.")
+            else:
+                print(f"delete error, error code: {ret1} and {ret2}.") 
+
+        if ret.status_code == 200:
+            print("success! code: "+str(ret.status_code))
+            return True
+        else:
+            print("error occured, code: "+str(ret.status_code))
+            return False
+        
+
 
 
     def login(self):
@@ -244,9 +266,8 @@ class Report(object):
             'CAS_LT': cas_lt,
             'LT': lt_code
         }
-        s.post(url, data=data)
-
         print("lt-code is {}, login...".format(lt_code))
+        s.post(url, data=data)
         return s
 
 
