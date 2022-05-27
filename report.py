@@ -101,8 +101,11 @@ class Report(object):
             
         # 自动上传健康码
         is_new_upload = 0
+        is_user_upload = 0
+        if(self.pic[0] != '' and self.pic[1] != ''):
+            is_user_upload = 1
         ret = session.get("https://weixine.ustc.edu.cn/2020/apply/daliy/i?t=3")
-        if (ret.url == "https://weixine.ustc.edu.cn/2020/upload/xcm"):
+        if (ret.url == "https://weixine.ustc.edu.cn/2020/upload/xcm" or is_user_upload == 1):
             is_new_upload = 1
             can_upload_code = 1              
             r = session.get(UPLOAD_PAGE_URL)
@@ -207,7 +210,7 @@ class Report(object):
         ret = session.post(url=REPORT_URL, data=REPORT_DATA)
         
         #删除占用码(可选功能, 默认关闭, 若想开启请取消注释)
-        if (is_new_upload == 1):
+        if (is_new_upload == 1 and is_user_upload == 0):
            print("delete.")
            header = session.headers
            header['referer'] = "https://weixine.ustc.edu.cn/2020/upload/xcm"
