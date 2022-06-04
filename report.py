@@ -236,6 +236,7 @@ class Report(object):
                     info = "file"
                 else:
                     info = "picture"
+                print(r.text)
                 print(f"Uploaded {description} {info}: {r.json()['status']}")
             
             
