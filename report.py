@@ -233,9 +233,9 @@ class Report(object):
                 #print(r.text):
                 r.raise_for_status()
                 if can_upload_file:
-                    info = file
+                    info = "file"
                 else:
-                    info = picture
+                    info = "picture"
                 print(f"Uploaded {description} {info}: {r.json()['status']}")
             
             
