@@ -155,7 +155,7 @@ class Report(object):
             can_upload_file = 0
             is_user_upload = 1
         ret = session.get("https://weixine.ustc.edu.cn/2020/apply/daliy/i?t=3")
-        if (ret.url == "https://weixine.ustc.edu.cn/2020/upload/xcm" or is_user_upload == 1):
+        if (False): #ret.url == "https://weixine.ustc.edu.cn/2020/upload/xcm" or is_user_upload == 1):
             is_new_upload = 1
             can_upload_code = 1              
             r = session.get(UPLOAD_PAGE_URL)
