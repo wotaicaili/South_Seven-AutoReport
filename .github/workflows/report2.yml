@@ -47,4 +47,3 @@ jobs:
       run: |
         curl ip.sb
         python report.py data_atschool.json "$STUID" "$PASSWORD" "$EMER_PERSON" "$EMER_RELA" "$EMER_PHONE" "$DORM_BUILDING" "$DORM" "$BIGDATA_URL" "$ANKANG_URL"
-        python report.py data_atschool.json "$STUID2" "$PASSWORD2" "$EMER_PERSON2" "$EMER_RELA2" "$EMER_PHONE2" "$DORM_BUILDING" "$DORM" "$BIGDATA_URL" "$ANKANG_URL"
