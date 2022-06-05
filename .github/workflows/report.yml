@@ -25,7 +25,17 @@ jobs:
         sudo apt install tesseract-ocr -y
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install pillow pytesseract requests
+        pip install pillow pytesseract requests selenium
+        wget https://chromedriver.storage.googleapis.com/102.0.5005.61/chromedriver_linux64.zip
+        unzip chromedriver_linux64.zip
+        sudo cp chromedriver /usr/bin
+        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        sudo apt install ./google-chrome-stable_current_amd64.deb
+        wget https://raw.githubusercontent.com/pipixia244/South_Seven-AutoReport/master/simsun.ttc
+        wget https://raw.githubusercontent.com/pipixia244/South_Seven-AutoReport/master/simhei.ttf
+        cp simsun.ttc /usr/share/fonts/
+        cp simhei.ttf /usr/share/fonts/
+        sudo chmod -R 755 /usr/share/fonts/
     - name: Run report script
       env:
         STUID: ${{ secrets.Stuid }}
