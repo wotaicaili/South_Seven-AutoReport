@@ -26,7 +26,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pillow pytesseract requests selenium
-        wget https://chromedriver.storage.googleapis.com/102.0.5005.61/chromedriver_linux64.zip
+        wget https://chromedriver.storage.googleapis.com/104.0.5112.79/chromedriver_linux64.zip
         unzip chromedriver_linux64.zip
         sudo cp chromedriver /usr/bin
         wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
